@@ -307,12 +307,14 @@ public class SpringApplication {
 					applicationArguments);
 			configureIgnoreBeanInfo(environment);
 			Banner printedBanner = printBanner(environment);
+			// 创建应用上下文
 			context = createApplicationContext();
 			exceptionReporters = getSpringFactoriesInstances(
 					SpringBootExceptionReporter.class,
 					new Class[] { ConfigurableApplicationContext.class }, context);
 			prepareContext(context, environment, listeners, applicationArguments,
 					printedBanner);
+			// 刷新上下文
 			refreshContext(context);
 			afterRefresh(context, applicationArguments);
 			stopWatch.stop();
@@ -320,7 +322,9 @@ public class SpringApplication {
 				new StartupInfoLogger(this.mainApplicationClass)
 						.logStarted(getApplicationLog(), stopWatch);
 			}
+			// 回调监听器
 			listeners.started(context);
+			// 回调实现了 ApplicationRunner 或 CommandLineRunner 的 Runner
 			callRunners(context, applicationArguments);
 		}
 		catch (Throwable ex) {
@@ -389,6 +393,7 @@ public class SpringApplication {
 		// Load the sources
 		Set<Object> sources = getAllSources();
 		Assert.notEmpty(sources, "Sources must not be empty");
+		// 加载 bean 到上下文
 		load(context, sources.toArray(new Object[0]));
 		listeners.contextLoaded(context);
 	}
